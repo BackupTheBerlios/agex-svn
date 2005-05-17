@@ -46,14 +46,15 @@
 				<Match pattern="*.cs" path="./Decoders" recurse="false"/>
 			</Files>
 		</Project>
+<?if OS = "Win32" ?>
 		<Project 
 			name="Axiom.SoundSystems.DirectSound" 
 			type="Library" 
-			path="./DirectSound"
+			path="./"
 			language="C#" 
 			runtime="Microsoft" >
 
-			<ReferencePath>../bin/Debug</ReferencePath>
+			<ReferencePath>./bin/Debug</ReferencePath>
 			<Reference name="System" />
 			<Reference name="Axiom.Engine" localCopy="true" />
 			<Reference name="Axiom.MathLib" localCopy="true" />
@@ -62,17 +63,18 @@
 			<Reference name="Microsoft.DirectX.DirectSound" />
 			
 			<Files>
-				<Match pattern="*.cs" path="./" recurse="false"/>
+				<Match pattern="*.cs" path="./DirectSound" recurse="false"/>
 			</Files>
 		</Project>
+<?endif ?>
 		<Project 
 			name="Axiom.SoundSystems.OpenAL" 
 			type="Library" 
-			path="./OpenAL"
+			path="./"
 			language="C#" 
 			runtime="Microsoft" >
 
-			<ReferencePath>../bin/Debug</ReferencePath>
+			<ReferencePath>./bin/Debug</ReferencePath>
 			<Reference name="System" />
 			<Reference name="Axiom.Engine" localCopy="true" />
 			<Reference name="Axiom.MathLib" localCopy="true" />
@@ -80,18 +82,18 @@
 			<Reference name="Tao.OpenAL" localCopy="true" />			
 			
 			<Files>
-				<Match pattern="*.cs" path="./" recurse="false"/>
+				<Match pattern="*.cs" path="./OpenAL" recurse="false"/>
 			</Files>
 		</Project>
 		<Project 
 			name="AGESDemo" 
 			type="Exe" 
-			path="./AGESDemo"
+			path="./"
 			language="C#" 
 			runtime="Microsoft" 
-			icon="./icon.ico" >
+			icon="./AGESDemo/icon.ico" >
 
-			<ReferencePath>../bin/Debug</ReferencePath>
+			<ReferencePath>./bin/Debug</ReferencePath>
 			<Reference name="System" />
 			<Reference name="System.Drawing" />
 			<Reference name="Axiom.Engine" localCopy="true" />
@@ -99,24 +101,24 @@
 			<Reference name="Axiom.SoundSystems" localCopy="true" />
 			
 			<Files>
-				<Match pattern="*.cs" path="./" recurse="false"/>
+				<Match pattern="*.cs" path="./AGESDemo" recurse="false"/>
 			</Files>
 		</Project>
 		<Project 
 			name="Axiom.SoundSystems.Decoders.mp3" 
 			type="Library" 
-			path="./Decoders/mp3"
+			path="./"
 			language="C#" 
 			runtime="Microsoft" >
 
-			<ReferencePath>../../bin/Debug</ReferencePath>
+			<ReferencePath>./bin/Debug</ReferencePath>
 			<Reference name="System" />
 			<Reference name="Axiom.Engine" localCopy="true" />
 			<Reference name="Axiom.SoundSystems" localCopy="true" />
 			<Reference name="Mp3Sharp" localCopy="true" />
 			
 			<Files>
-				<Match pattern="*.cs" path="./" recurse="false"/>
+				<Match pattern="*.cs" path="./Decoders/mp3" recurse="false"/>
 			</Files>
 		</Project>
 	</Solution>
