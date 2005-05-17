@@ -1,0 +1,9 @@
+We're using the following libraries:
+Microsoft's Managed DirectX
+OpenAL - http://www.openal.org
+TAO Framework bindings for OpenAL - http://www.taoframework.com
+Mp3Sharp managed mp3 decoder - http://www.heroicsalmonleap.net/mle/mp3sharp/
+CSVorbis, C# port of Jorbis - http://www.monoproject.com
+
+The following people contributed to this project (feel free to add your name):
+Ilmar 'SeaEagle1' Kruis - ikruis@gmail.com - Founder

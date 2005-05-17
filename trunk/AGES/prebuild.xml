@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<DNPreBuild xmlns="http://dnpb.sourceforge.net/schemas/dnpb-1.4.xsd">
+	<Solution name="Axiom.SoundSystems">
+		<Configuration name="Debug">
+			<Options>
+			    <?if OS = "Win32" ?>
+				<CompilerDefines>DEBUG;TRACE;WIN32</CompilerDefines>
+				<?else ?>
+				<CompilerDefines>DEBUG;TRACE;POSIX</CompilerDefines>
+				<?endif ?>
+				<OptimizeCode>false</OptimizeCode>
+				<OutputPath>./bin/Debug</OutputPath>
+				<DebugInformation>true</DebugInformation>
+			</Options>
+		</Configuration>
+		
+		<Configuration name="Release">
+			<Options>
+			    <?if OS = "Win32" ?>
+				<CompilerDefines>TRACE;WIN32</CompilerDefines>
+				<?else ?>
+				<CompilerDefines>TRACE;POSIX</CompilerDefines>
+				<?endif ?>
+				<OutputPath>./bin/Release</OutputPath>
+				<OptimizeCode>true</OptimizeCode>
+				<DebugInformation>false</DebugInformation>
+			</Options>
+		</Configuration>
+		
+		<Project 
+			name="Axiom.SoundSystems" 
+			type="Library" 
+			path="./"
+			language="C#" 
+			runtime="Microsoft" >
+
+			<ReferencePath>./bin/Debug</ReferencePath>
+			<Reference name="System" />
+			<Reference name="Axiom.Engine" localCopy="true" />
+			<Reference name="Axiom.MathLib" localCopy="true" />
+			<Reference name="csvorbis" localCopy="true" />
+			<Reference name="csogg" localCopy="true" />
+			
+			<Files>
+				<Match pattern="*.cs" path="./" recurse="false"/>
+				<Match pattern="*.cs" path="./Decoders" recurse="false"/>
+			</Files>
+		</Project>
+		<Project 
+			name="Axiom.SoundSystems.DirectSound" 
+			type="Library" 
+			path="./DirectSound"
+			language="C#" 
+			runtime="Microsoft" >
+
+			<ReferencePath>../bin/Debug</ReferencePath>
+			<Reference name="System" />
+			<Reference name="Axiom.Engine" localCopy="true" />
+			<Reference name="Axiom.MathLib" localCopy="true" />
+			<Reference name="Axiom.SoundSystems" localCopy="true" />
+			<Reference name="Microsoft.DirectX" />
+			<Reference name="Microsoft.DirectX.DirectSound" />
+			
+			<Files>
+				<Match pattern="*.cs" path="./" recurse="false"/>
+			</Files>
+		</Project>
+		<Project 
+			name="Axiom.SoundSystems.OpenAL" 
+			type="Library" 
+			path="./OpenAL"
+			language="C#" 
+			runtime="Microsoft" >
+
+			<ReferencePath>../bin/Debug</ReferencePath>
+			<Reference name="System" />
+			<Reference name="Axiom.Engine" localCopy="true" />
+			<Reference name="Axiom.MathLib" localCopy="true" />
+			<Reference name="Axiom.SoundSystems" localCopy="true" />
+			<Reference name="Tao.OpenAL" localCopy="true" />			
+			
+			<Files>
+				<Match pattern="*.cs" path="./" recurse="false"/>
+			</Files>
+		</Project>
+		<Project 
+			name="AGESDemo" 
+			type="Exe" 
+			path="./AGESDemo"
+			language="C#" 
+			runtime="Microsoft" 
+			icon="./icon.ico" >
+
+			<ReferencePath>../bin/Debug</ReferencePath>
+			<Reference name="System" />
+			<Reference name="System.Drawing" />
+			<Reference name="Axiom.Engine" localCopy="true" />
+			<Reference name="Axiom.MathLib" localCopy="true" />
+			<Reference name="Axiom.SoundSystems" localCopy="true" />
+			
+			<Files>
+				<Match pattern="*.cs" path="./" recurse="false"/>
+			</Files>
+		</Project>
+		<Project 
+			name="Axiom.SoundSystems.Decoders.mp3" 
+			type="Library" 
+			path="./Decoders/mp3"
+			language="C#" 
+			runtime="Microsoft" >
+
+			<ReferencePath>../../bin/Debug</ReferencePath>
+			<Reference name="System" />
+			<Reference name="Axiom.Engine" localCopy="true" />
+			<Reference name="Axiom.SoundSystems" localCopy="true" />
+			<Reference name="Mp3Sharp" localCopy="true" />
+			
+			<Files>
+				<Match pattern="*.cs" path="./" recurse="false"/>
+			</Files>
+		</Project>
+	</Solution>
+</DNPreBuild>
