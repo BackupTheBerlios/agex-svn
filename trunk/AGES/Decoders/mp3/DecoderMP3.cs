@@ -48,21 +48,38 @@ namespace Axiom.SoundSystems.Decoders
 		/// </summary>
 		public WaveFile Decode(Stream input)
 		{
+			//TODO: Still AWFUL playback quality
+			
 			Mp3Stream mp3 = new Mp3Stream(input);
 			
-			MemoryStream save = new MemoryStream();
-			int read = 0;
-			byte[] buffer = new byte[512];
-			while(read < mp3.Length)
+			mp3.Seek(0, SeekOrigin.Begin);
+			mp3.DecodeFrames(1);
+			
+			WaveFile wf = new WaveFile();
+			wf.Bits = 16;
+			wf.Channels = mp3.ChannelCount;
+			wf.Frequency = mp3.Frequency;
+			System.Console.WriteLine(mp3.Length);
+			MemoryStream data = new MemoryStream();
+			int buffersize = 4*4096;
+			byte[] buffer = new byte[buffersize];
+			int result = 1;
+			while(true)
 			{
-				mp3.Read(buffer, 0, 512);
-				save.Write(buffer, 0, 512);
-				read = read + 512;
+				result = mp3.Read(buffer, 0, buffersize);
+				data.Write(buffer, 0, result);
+				if(result != buffersize)
+				{
+					break;
+				}
 			}
 			
-			//TODO: mp3 decoder doesn't work yet;
+			data.Seek(0, SeekOrigin.Begin);
+			wf.Data = data;
 			
-			return new WaveFile();
+			Axiom.Core.LogManager.Instance.Write("SoundSystem: File is MPEG Layer III "+wf.Frequency+"Hz, "+wf.Channels+" channels");
+			
+			return wf;
 		}
 	}
 }
