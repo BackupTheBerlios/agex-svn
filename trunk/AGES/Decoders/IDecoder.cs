@@ -34,6 +34,6 @@ namespace Axiom.SoundSystems.Decoders
 		/// </summary>
 		/// <param name="input">The encoded stream</param>
 		/// <returns>The decoded stream</returns>
-		Stream Decode(Stream input);
+		WaveFile Decode(Stream input);
 	}
 }

@@ -96,7 +96,6 @@ namespace Axiom.SoundSystems.DirectSound
 			}
 			listener.CommitDeferredSettings();
 			
-			System.Console.WriteLine("Listener: " + listener.Position.ToString());
 		}
 		
 		public override Axiom.MathLib.Vector3 CameraVelocity

@@ -47,8 +47,8 @@ namespace Axiom.SoundSystems
 				// load the built-in decoders
 				extensionlist.Add("wav");
 				typelist.Add(typeof(Axiom.SoundSystems.Decoders.DecoderWAV));
-				//extensionlist.Add("ogg");
-				//typelist.Add(typeof(Axiom.SoundSystems.Decoders.DecoderOGG));
+				extensionlist.Add("ogg");
+				typelist.Add(typeof(Axiom.SoundSystems.Decoders.DecoderOGG));
 	
 				instance = this;
 			} else {
@@ -61,7 +61,7 @@ namespace Axiom.SoundSystems
 		/// </summary>
 		/// <param name="filename">The name of the file to load</param>
 		/// <returns>A stream with the decoded file contents</returns>
-		public Stream Load(string filename)
+		public WaveFile Load(string filename)
 		{
 			// load the stream with the resourcemanager
 			Stream originalFile = ResourceManager.FindCommonResourceData(filename);
@@ -87,7 +87,7 @@ namespace Axiom.SoundSystems
 			}
 			
 			throw new AxiomException("Unkown or unsupported sound format " + filename + ", please check extension.");
-			return null;
+			//return null;
 		}
 		
 		/// <summary>

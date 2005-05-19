@@ -21,25 +21,66 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using System;
 using System.IO;
-using Axiom.SoundSystems;
 
-namespace Axiom.SoundSystems.Decoders
+namespace Axiom.SoundSystems
 {
-	/// <summary>
-	/// The Wave decoder
-	/// </summary>
-	public class DecoderWAV : IDecoder
+
+	public struct WaveFile
 	{
-		/// <summary>
-		/// Decodes the Wave file
-		/// </summary>
-		/// <param name="input">The incoming stream</param>
-		/// <returns>The outgoing stream</returns>
-		public WaveFile Decode(Stream input)
+		private int freq;
+		private short bits;
+		private short chan;
+		private Stream data;
+		private Stream file;
+		
+		public int Frequency
 		{
-			WaveFile wf = new WaveFile();
-			wf.WavFile = input;
-			return wf;
+			get{
+				return freq;
+			}
+			set{
+				freq = value;
+			}
+		}
+		
+		public short Bits
+		{
+			get{
+				return bits;
+			}
+			set{
+				bits = value;
+			}
+		}
+		
+		public short Channels
+		{
+			get{
+				return chan;
+			}
+			set{
+				chan = value;
+			}
+		}
+		
+		public Stream Data
+		{
+			get{
+				return data;
+			}
+			set{
+				data = value;
+			}
+		}
+		
+		public Stream WavFile
+		{
+			get{
+				return file;
+			}
+			set{
+				file = value;
+			}
 		}
 	}
 }

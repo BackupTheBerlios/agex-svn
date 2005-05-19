@@ -35,26 +35,49 @@ namespace Axiom.SoundSystems.DirectSound
 		
 		public Sound(string filename, int ID, short type) : base(filename, ID)
 		{
-			soundDesc = new BufferDescription();
-			soundDesc.GlobalFocus = false;
-			soundDesc.ControlVolume = true;
+			WaveFile wf = FileManager.Instance.Load(filename);
 			
-			System.IO.Stream filestream = FileManager.Instance.Load(filename);
-			int streamlen = (int) filestream.Length;
-			
-			switch(type)
+			if(wf.WavFile != null)
 			{
-				case SIMPLE_SOUND:
-					sound = new SecondaryBuffer(filestream, streamlen, soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);
-					break;
-				case THREED_SOUND:
+				soundDesc = new BufferDescription();
+				soundDesc.GlobalFocus = false;
+				soundDesc.ControlVolume = true;
+				
+				if(type == Sound.THREED_SOUND)
+				{
 					soundDesc.Control3D = true;
 					soundDesc.Mute3DAtMaximumDistance = true;
-					sound = new SecondaryBuffer(filestream, streamlen, soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);
-					threeDsound = new Buffer3D(sound);
-					threeDsound.Mode = Mode3D.Normal;
-					threeDsound.Deferred = true;
-					break;
+				}
+				
+				sound = new SecondaryBuffer(wf.WavFile, soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);
+			} else {
+				WaveFormat wfo = new WaveFormat();
+				wfo.BitsPerSample = wf.Bits;
+				wfo.Channels = wf.Channels;
+				wfo.SamplesPerSecond = wf.Frequency;
+				wfo.BlockAlign = (short)(wf.Bits*wf.Channels / 8);
+				wfo.FormatTag = WaveFormatTag.Pcm;
+				wfo.AverageBytesPerSecond = wf.Frequency * wfo.BlockAlign;
+				
+				soundDesc = new BufferDescription(wfo);
+				soundDesc.GlobalFocus = false;
+				soundDesc.ControlVolume = true;
+				soundDesc.BufferBytes = (int)wf.Data.Length;
+				if(type == Sound.THREED_SOUND)
+				{
+					soundDesc.Control3D = true;
+					soundDesc.Mute3DAtMaximumDistance = true;
+				}
+				
+				sound = new SecondaryBuffer(soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);	
+				sound.Write(0, wf.Data, (int)wf.Data.Length, LockFlag.EntireBuffer);
+			}
+			
+			if(type == Sound.THREED_SOUND)
+			{
+				threeDsound = new Buffer3D(sound);
+				threeDsound.Mode = Mode3D.Normal;
+				threeDsound.Deferred = true;
 			}
 		}
 		

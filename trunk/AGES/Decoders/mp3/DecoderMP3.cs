@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 using System.IO;
 using Mp3Sharp;
+using Axiom.SoundSystems;
 
 namespace Axiom.SoundSystems.Decoders
 {
@@ -45,10 +46,23 @@ namespace Axiom.SoundSystems.Decoders
 		/// <summary>
 		/// Decodes the mp3 file
 		/// </summary>
-		public Stream Decode(Stream input)
+		public WaveFile Decode(Stream input)
 		{
 			Mp3Stream mp3 = new Mp3Stream(input);
-			return mp3;
+			
+			MemoryStream save = new MemoryStream();
+			int read = 0;
+			byte[] buffer = new byte[512];
+			while(read < mp3.Length)
+			{
+				mp3.Read(buffer, 0, 512);
+				save.Write(buffer, 0, 512);
+				read = read + 512;
+			}
+			
+			//TODO: mp3 decoder doesn't work yet;
+			
+			return new WaveFile();
 		}
 	}
 }

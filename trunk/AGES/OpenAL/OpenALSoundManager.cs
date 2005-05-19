@@ -76,6 +76,7 @@ namespace Axiom.SoundSystems.OpenAL
 			Alut.alutExit();
 			base.Dispose();
 		}
+		
 	}
 
 }

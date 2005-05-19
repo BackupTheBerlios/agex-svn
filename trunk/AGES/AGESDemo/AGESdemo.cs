@@ -99,14 +99,14 @@ namespace Demo {
             back.Play(true);
             
             // load a 3D sound
-            growl = SoundManager.Instance.LoadSound("growl.wav", Sound.THREED_SOUND);
+            growl = SoundManager.Instance.LoadSound("growl.ogg", Sound.THREED_SOUND);
             // attach the sound to the head
            	headNode.AttachObject(growl);
             // set the sound's properties
-            growl.ConeAngles = new int[]{90, 120};
-            growl.ConeDirection = Vector3.UnitZ;
-      		growl.MaxDistance = 5000;
-            growl.OutsideVolume = -10000;
+            //growl.ConeAngles = new int[]{90, 120};
+           // growl.ConeDirection = Vector3.UnitZ;
+      		//growl.MaxDistance = 5000;
+           // growl.OutsideVolume = -10000;
             // play the 3D sound in a loop
             growl.Play(true);
             ////////////////////////////////////////////////////////////////////////////////
@@ -153,8 +153,7 @@ namespace Demo {
 
             // add time to the animation which is driven off of rendering time per frame
             animationState.AddTime(e.TimeSinceLastFrame);
-            System.Console.WriteLine("Sound:" + growl.WorldPosition.ToString() );
-        }
+         }
 
         #endregion Protected Override Event Handlers
 	}
