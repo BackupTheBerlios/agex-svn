@@ -86,7 +86,7 @@ namespace Demo {
             SceneNode cameraNode = scene.RootSceneNode.CreateChildSceneNode("CameraNode");
             cameraNode.AttachObject(camera);
  
-            ////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////- AGE Sound Library Settings -//////////////////////////
             // initialise the SoundManager by setting the RenderWindow
             SoundManager.Instance.SetRenderWindow(this.window, this.camera);
             SoundManager.Instance.RolloffFactor = 0.01f; // we're working on a large scale

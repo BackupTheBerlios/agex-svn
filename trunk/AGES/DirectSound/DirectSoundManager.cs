@@ -57,9 +57,13 @@ namespace Axiom.SoundSystems.DirectSound
 		
 		public override Axiom.SoundSystems.Sound LoadSound(string filename, short type)
 		{
+			// create the sound and add it to our list
 			Axiom.SoundSystems.Sound sound = new Axiom.SoundSystems.DirectSound.Sound(filename, lastid, type);
 			soundlist.Add(sound);
+			
+			// update the ID counter
 			lastid++;
+			
 			return sound;
 		}
 		
@@ -68,13 +72,17 @@ namespace Axiom.SoundSystems.DirectSound
 			this.window = renderwindow;
 			this.cam = camera;
 			
+			// link the device to our current System.Windows.Form (since we need DirectX we're sure that we're in Windows)
 			device.SetCooperativeLevel((System.Windows.Forms.Control)window.Handle, CooperativeLevel.Priority);
 			
+			// create a buffer for the listener
 			BufferDescription desc = new BufferDescription();
 			desc.Control3D = true;
 			desc.PrimaryBuffer = true;
 			Buffer lbuffer = new Buffer(desc, device);
 			listener = new Listener3D(lbuffer);
+			
+			// let the log know that we're using DirectSound and it's set up
 			LogManager.Instance.Write("DirectSound SoundSystem initialised");
 		}
 		
@@ -82,11 +90,14 @@ namespace Axiom.SoundSystems.DirectSound
 		{
 			base.FrameUpdate(source, e);
 			
+			// if the camera moved
 			if(cam.WorldPosition.x != lastcamposition.x || cam.WorldPosition.y != lastcamposition.y || cam.WorldPosition.z != lastcamposition.z)
 			{
 				listener.Position = new Vector3(cam.WorldPosition.x, cam.WorldPosition.y, cam.WorldPosition.z);
 				lastcamposition = cam.WorldPosition;
 			}
+			
+			// if the camera turned
 			if(cam.WorldOrientation.w != lastcamorientation.w || cam.WorldOrientation.x != lastcamorientation.x || cam.WorldOrientation.y != lastcamorientation.y || cam.WorldOrientation.z != lastcamorientation.z)
 			{
 				Axiom.MathLib.Vector3 top = cam.WorldOrientation.YAxis;
@@ -94,6 +105,8 @@ namespace Axiom.SoundSystems.DirectSound
 				listener.Orientation = new Listener3DOrientation(new Vector3(front.x, front.y, front.z), new Vector3(top.x, top.y, top.z));	
 				lastcamorientation = cam.WorldOrientation;
 			}
+			
+			// we have updated all sound settings for this frame, so let DirectX recalculate the output sound with the new settings
 			listener.CommitDeferredSettings();
 			
 		}

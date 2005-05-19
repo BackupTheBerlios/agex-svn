@@ -79,6 +79,16 @@ namespace Axiom.SoundSystems
 		public abstract void Play(bool loop);
 		
 		/// <summary>
+		/// Stops playing the file, calling <see cref="Play(bool loop)">Play()</see> again will start playing from the position where Pause() was called
+		/// </summary>
+		public abstract void Pause();
+		
+		/// <summary>
+		/// Stops playing the file and set the play position to the start of the buffer
+		/// </summary>
+		public abstract void Stop();
+		
+		/// <summary>
 		/// The ID of this sound given by the SoundManager
 		/// </summary>
 		public int ID

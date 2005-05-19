@@ -35,22 +35,29 @@ namespace Axiom.SoundSystems.DirectSound
 		
 		public Sound(string filename, int ID, short type) : base(filename, ID)
 		{
+			// get the file data
 			WaveFile wf = FileManager.Instance.Load(filename);
 			
-			if(wf.WavFile != null)
+			if(wf.WavFile != null) // we have a wave file with headers
 			{
+				// set up the buffer properties
 				soundDesc = new BufferDescription();
 				soundDesc.GlobalFocus = false;
 				soundDesc.ControlVolume = true;
 				
+				// enable 3D features for 3D sounds
 				if(type == Sound.THREED_SOUND)
 				{
 					soundDesc.Control3D = true;
 					soundDesc.Mute3DAtMaximumDistance = true;
 				}
 				
+				// load the wave file from the stream into the buffer
 				sound = new SecondaryBuffer(wf.WavFile, soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);
-			} else {
+				
+			} else { // we have only raw PCM encoded sound data (usually from a decoder)
+				
+				// convert the format settings
 				WaveFormat wfo = new WaveFormat();
 				wfo.BitsPerSample = wf.Bits;
 				wfo.Channels = wf.Channels;
@@ -59,20 +66,25 @@ namespace Axiom.SoundSystems.DirectSound
 				wfo.FormatTag = WaveFormatTag.Pcm;
 				wfo.AverageBytesPerSecond = wf.Frequency * wfo.BlockAlign;
 				
+				// set up buffer properties
 				soundDesc = new BufferDescription(wfo);
 				soundDesc.GlobalFocus = false;
 				soundDesc.ControlVolume = true;
 				soundDesc.BufferBytes = (int)wf.Data.Length;
+				
+				// enable 3D features for 3D sounds
 				if(type == Sound.THREED_SOUND)
 				{
 					soundDesc.Control3D = true;
 					soundDesc.Mute3DAtMaximumDistance = true;
 				}
 				
+				// initialise the buffer and copy the (raw data) stream into it
 				sound = new SecondaryBuffer(soundDesc, ((DirectSoundManager)SoundManager.Instance).Device);	
 				sound.Write(0, wf.Data, (int)wf.Data.Length, LockFlag.EntireBuffer);
 			}
 			
+			// create a 3D buffer for 3D sounds
 			if(type == Sound.THREED_SOUND)
 			{
 				threeDsound = new Buffer3D(sound);
@@ -92,6 +104,16 @@ namespace Axiom.SoundSystems.DirectSound
 			}
 		}
 		
+		public override void Pause()
+		{
+			sound.Stop();
+		}
+		
+		public override void Stop()
+		{
+			sound.Stop();
+			sound.SetCurrentPosition(0);
+		}
 		public override void Dispose()
 		{
 			base.Dispose();

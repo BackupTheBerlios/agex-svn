@@ -22,8 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 // Some general remarks and todos
 // TODO: split buffer and source to prevent more filesystem access than needed
 // TODO: Music class for streaming long files
-// TODO: Ogg/Mp3 decoder
-// ?long term: load in seperate thread
+// TODO: Threading
 
 using System;
 using System.Collections;

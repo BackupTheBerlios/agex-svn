@@ -82,6 +82,16 @@ namespace Axiom.SoundSystems.OpenAL
 			Al.alSourcePlay(source);
 		}
 		
+		public override void Pause()
+		{
+			Al.alSourcePause(source);
+		}
+		
+		public override void Stop()
+		{
+			Al.alSourceStop(source);
+		}
+		
 		public override void Dispose()
 		{
 			Al.alDeleteSources(1, ref source);
