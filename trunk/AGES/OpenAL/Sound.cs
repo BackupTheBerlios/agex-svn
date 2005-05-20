@@ -23,6 +23,7 @@ using System;
 using System.IO;
 using Axiom.Core;
 using Axiom.MathLib;
+using Axiom.SoundSystems;
 using Tao.OpenAl;
 
 namespace Axiom.SoundSystems.OpenAL
@@ -30,44 +31,93 @@ namespace Axiom.SoundSystems.OpenAL
 
 	public class Sound : Axiom.SoundSystems.Sound
 	{
-		private int sound;
-		private int source;
+		private static int sound;
+		private static int source;
 		private Vector3 worldposition = Vector3.Zero;
+		private short soundtype;
+		private float rolloff = 1;
 		
 		public Sound(string filename, int ID, short type) : base(filename, ID)
 		{
-			switch(type)
+			this.soundtype = type;
+			
+			// initialize the buffer
+			Al.alGenBuffers(1, out sound);
+			
+			WaveFile file = FileManager.Instance.Load(filename);
+			
+			int format, size, frequency, loop;
+			byte[] data;			
+			
+			if ( (file.WavFile) != null )
+			{ 
+				// we have a full wave file with headers
+				// read the stream into a byte array
+				byte[] buffer = new byte[file.WavFile.Length];
+				file.WavFile.Read(buffer, 0, (int)file.WavFile.Length);
+				
+				Alut.alutLoadWAVMemory(buffer, out format, out data, out size, out frequency, out loop);
+				
+			} else { // we only have raw PCM encoded data
+				
+				// read the stream into a byte array
+				data = new byte[file.Data.Length];
+				file.Data.Read(data, 0, (int)file.Data.Length);
+				size = (int) file.Data.Length;
+				frequency = file.Frequency;
+				format = 0;
+				
+				// get the data format from the Channels and Bits properties
+				switch(file.Bits)
+				{
+					case 8:
+						switch(file.Channels)
+						{
+							case 1:
+								format = Al.AL_FORMAT_MONO8;
+								break;
+							case 2:
+								format = Al.AL_FORMAT_STEREO8;
+								break;
+						}
+						break;
+					case 16:
+						switch(file.Channels)
+						{
+							case 1:
+								format = Al.AL_FORMAT_MONO16;
+								break;
+							case 2:
+								format = Al.AL_FORMAT_STEREO16;
+								break;
+						}
+						break;
+				}
+			}
+			
+			// fill the buffer
+			Al.alBufferData(sound, format, data, size, frequency);
+			
+			if(file.WavFile != null) // if we loaded a Wave file we can unload it now
 			{
-				case SIMPLE_SOUND:
-					Al.alGenBuffers(1, out sound);
-					if(Al.alGetError() != Al.AL_NO_ERROR) {
-						throw new AxiomException("Unable to create buffer for file " + filename, null);
-					}
-					
-					MemoryStream file = (MemoryStream)ResourceManager.FindCommonResourceData(filename);
-					
-					int format, size, frequency, loop;
-					byte[] data;
-					Alut.alutLoadWAVMemory(file.GetBuffer(), out format, out data, out size, out frequency, out loop);
-					if(data == null)
-					{
-						throw new AxiomException("Unable to load " + filename + " into buffer");
-					}
-					
-					Al.alBufferData(sound, format, data, size, frequency);
-					Alut.alutUnloadWAV(format, out data, size, frequency);
+				Alut.alutUnloadWAV(format, out data, size, frequency);
+			}
+			
+			// create a sound source for the buffer
+			Al.alGenSources(1, out source);
 
-					Al.alGenSources(1, out source);
-					if(Al.alGetError() != Al.AL_NO_ERROR)
-					{
-						throw new AxiomException("Unable to create source for file " + filename, null);
-					}
-					
-					Al.alSourcei(source, Al.AL_BUFFER, sound);
-					
-					break;
-				case THREED_SOUND:
-					break;
+			// link the buffer and sound source
+			Al.alSourcei(source, Al.AL_BUFFER, sound);
+			
+			if(type == Sound.SIMPLE_SOUND)
+			{
+				Al.alSourcei(source, Al.AL_DISTANCE_MODEL, Al.AL_NONE);
+				rolloff = 0;
+				Al.alSourcef(source, Al.AL_ROLLOFF_FACTOR, 0);
+				
+			} else if (type == Sound.THREED_SOUND) {
+				
+				Al.alSourcei(source, Al.AL_DISTANCE_MODEL, Al.AL_INVERSE_DISTANCE);
 			}
 		}
 		
@@ -99,9 +149,30 @@ namespace Axiom.SoundSystems.OpenAL
 			base.Dispose();
 		}
 		
+		public override void UpdatePosition()
+		{
+			base.UpdatePosition();
+			
+			// check if the (global) rolloff factor changed and adapt to it
+			if(SoundManager.Instance.RolloffFactor != rolloff && this.soundtype == Sound.THREED_SOUND)
+			{
+				rolloff = SoundManager.Instance.RolloffFactor;
+				Al.alSourcef(source, Al.AL_ROLLOFF_FACTOR, rolloff);
+			}
+			
+			// if it's a 'simple' sound, set the position to the listener's position
+			if(this.soundtype == Sound.SIMPLE_SOUND)
+			{
+				float[] temp = new float[3];
+				Al.alGetListenerfv(Al.AL_POSITION, temp);
+				Al.alSourcefv(source, Al.AL_POSITION, temp);
+			}
+		}
+		
 		protected override void SetPosition(Axiom.MathLib.Vector3 newposition)
 		{
-			//TODO: Implement
+			float[] vector = new float[]{newposition.x, newposition.y, newposition.z};
+			Al.alSourcefv(source, Al.AL_POSITION, vector);
 		}
 		
 		public override Vector3 WorldPosition
@@ -111,6 +182,7 @@ namespace Axiom.SoundSystems.OpenAL
 			}
 		}
 		
+		//TODO: relative to SceneNode
 		public override int[] ConeAngles
 		{
 			get{
@@ -125,6 +197,7 @@ namespace Axiom.SoundSystems.OpenAL
 			}
 		}
 		
+		//TODO: relative to SceneNode
 		public override Vector3 ConeDirection
 		{
 			get{
@@ -187,6 +260,7 @@ namespace Axiom.SoundSystems.OpenAL
 			}
 		}
 		
+		//TODO: Volume conversion doesn't work too well yet
 		protected float GetOpenALVolume(int directSoundVolume)
 		{
 			float newvalue = (float)directSoundVolume / 1000f + 1f;

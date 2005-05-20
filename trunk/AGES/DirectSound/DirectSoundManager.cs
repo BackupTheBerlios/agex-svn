@@ -69,8 +69,7 @@ namespace Axiom.SoundSystems.DirectSound
 		
 		public override void SetRenderWindow(RenderWindow renderwindow, Camera camera)
 		{
-			this.window = renderwindow;
-			this.cam = camera;
+			base.SetRenderWindow(renderwindow, camera);
 			
 			// link the device to our current System.Windows.Form (since we need DirectX we're sure that we're in Windows)
 			device.SetCooperativeLevel((System.Windows.Forms.Control)window.Handle, CooperativeLevel.Priority);

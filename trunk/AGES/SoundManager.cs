@@ -141,9 +141,11 @@ namespace Axiom.SoundSystems
 		/// </summary>
 		/// <param name="window">The target RenderWindow</param>
 		/// <param name="camera">The 'listening' camera</param>
-		public virtual void SetRenderWindow(RenderWindow window, Camera camera)
+		public virtual void SetRenderWindow(RenderWindow renderwindow, Camera camera)
 		{
 			FileManager.Instance.LogSupportedFiles();
+			this.window = renderwindow;
+			this.cam = camera;
 		}
 		
 		/// <summary>

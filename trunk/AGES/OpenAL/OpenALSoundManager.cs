@@ -33,18 +33,52 @@ namespace Axiom.SoundSystems.OpenAL
 	public class OpenALSoundManager : SoundManager
 	{
 		private Vector3 listenerVelocity = Vector3.Zero;
+		private float rolloff = 1;
 		
 		public OpenALSoundManager () : base()
 		{
 			Alut.alutInit();
 			Al.alGetError();
-						
+			
+			instance = this;
+			
 			LogManager.Instance.Write("OpenAL SoundSystem initialised");
+		}
+		
+		protected override void FrameUpdate(Object source, FrameEventArgs e)
+		{
+			base.FrameUpdate(source, e);
+			
+			// if the camera moved
+			if(cam.WorldPosition.x != lastcamposition.x || cam.WorldPosition.y != lastcamposition.y || cam.WorldPosition.z != lastcamposition.z)
+			{
+				float[] vector = new float[]{cam.WorldPosition.x, cam.WorldPosition.y, cam.WorldPosition.z};
+				Al.alListenerfv(Al.AL_POSITION, vector);
+				lastcamposition = cam.WorldPosition;
+			} 
+			
+			// if the camera turned
+			if(cam.WorldOrientation.w != lastcamorientation.w || cam.WorldOrientation.x != lastcamorientation.x || cam.WorldOrientation.y != lastcamorientation.y || cam.WorldOrientation.z != lastcamorientation.z)
+			{
+				Axiom.MathLib.Vector3 top = cam.WorldOrientation.YAxis;
+				Axiom.MathLib.Vector3 front = cam.WorldOrientation.ZAxis;
+				float[] doublevector = new float[]{-front.x, -front.y, -front.z, top.x, top.y, top.z}; // negative front, to switch the left and right channel TODO: Test this with surround sound to see if back and forward is ok
+				Al.alListenerfv(Al.AL_ORIENTATION, doublevector);
+				lastcamorientation = cam.WorldOrientation;
+			}
+			
 		}
 	
 		public override Axiom.SoundSystems.Sound LoadSound(string filename, short type)
 		{
-			return null;
+			// create the sound and add it to the list
+			Sound thissound = new Axiom.SoundSystems.OpenAL.Sound(filename, lastid, type);
+			soundlist.Add(thissound);
+			
+			// update the last id
+			lastid++;
+			
+			return thissound;
 		}
 		
 		public override Vector3 CameraVelocity
@@ -62,12 +96,10 @@ namespace Axiom.SoundSystems.OpenAL
 		public override float RolloffFactor
 		{
 			set{
-				Al.alListenerf(Al.AL_ROLLOFF_FACTOR, value);
+				rolloff = value;
 			}
 			get{
-				float val;
-				Al.alGetListenerf(Al.AL_ROLLOFF_FACTOR, out val);
-				return val;
+				return rolloff;
 			}
 		}
 

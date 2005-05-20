@@ -94,12 +94,12 @@ namespace Demo {
             // load a simple sound
             Sound back = SoundManager.Instance.LoadSound("background.wav", Sound.SIMPLE_SOUND);
             // set the volume low
-            back.Volume = -2000;
+           // back.Volume = -2000;
             // play the simple sound in a loop
-           // back.Play(true);
+            back.Play(true);
             
             // load a 3D sound
-            growl = SoundManager.Instance.LoadSound("growl.mp3", Sound.THREED_SOUND);
+            growl = SoundManager.Instance.LoadSound("growl.ogg", Sound.THREED_SOUND);
             // attach the sound to the head
            	headNode.AttachObject(growl);
             // set the sound's properties
