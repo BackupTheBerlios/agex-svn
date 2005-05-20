@@ -47,6 +47,7 @@ namespace Axiom.SoundSystems.OpenAL
 		
 		protected override void FrameUpdate(Object source, FrameEventArgs e)
 		{
+					
 			base.FrameUpdate(source, e);
 			
 			// if the camera moved
