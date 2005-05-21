@@ -28,7 +28,7 @@ using Axiom.SoundSystems.Decoders;
 namespace Axiom.SoundSystems
 {
 	/// <summary>
-	/// The FileManager handles the loading of sound files
+	/// Class FileManager, takes care of the loading and decoding of audio files
 	/// </summary>
 	public class FileManager
 	{

@@ -178,11 +178,11 @@ namespace Axiom.SoundSystems.OpenAL
 		public override Vector3 WorldPosition
 		{
 			get{
+				//TODO: WorldPosition
 				return worldposition;
 			}
 		}
 		
-		//TODO: relative to SceneNode
 		public override int[] ConeAngles
 		{
 			get{
@@ -197,18 +197,11 @@ namespace Axiom.SoundSystems.OpenAL
 			}
 		}
 		
-		//TODO: relative to SceneNode
-		public override Vector3 ConeDirection
+		protected override void SetConeDirection(Axiom.MathLib.Vector3 direction)
 		{
-			get{
-				float[] vector = new float[]{0,0,0};
-				Al.alGetSourcefv(source, Al.AL_DIRECTION, vector);
-				return new Vector3(vector[0], vector[1], vector[2]);
-			}
-			set{
-				float[] vector = new float[]{value.x, value.y, value.z};
-				Al.alSourcefv(source, Al.AL_DIRECTION, vector);
-			}
+			Axiom.MathLib.Vector3 vector = direction;
+			float[] vector2 = new float[]{vector.x, vector.y, vector.z};
+			Al.alSourcefv(source, Al.AL_DIRECTION, vector2);			
 		}
 		
 		public override int OutsideVolume

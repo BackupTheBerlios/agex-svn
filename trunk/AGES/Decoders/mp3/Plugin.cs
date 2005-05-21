@@ -31,10 +31,13 @@ using Axiom.SoundSystems;
 namespace Axiom.SoundSystems.Decoders
 {
 	/// <summary>
-	/// Summary description for MP3Plugin.
+	/// The Axiom plugin for the MP3 decoder
 	/// </summary>
 	public class MP3Plugin : IPlugin 
 	{ 
+		/// <summary>
+		/// Register the MP3 decoder and the .mp3 extension with the <see cref="Axiom.SoundSystems.FileManager">FileManager</see>
+		/// </summary>
 		public void Start() 
 		{ 
 			if(FileManager.Instance == null)
@@ -45,6 +48,9 @@ namespace Axiom.SoundSystems.Decoders
 			FileManager.Instance.DecoderTypes.Add(typeof(Axiom.SoundSystems.Decoders.DecoderMP3));
 		} 
 
+		/// <summary>
+		/// Remove registration of the MP3 decoder and .mp3 extension from the <see cref="Axiom.SoundSystems.FileManager">FileManager</see>
+		/// </summary>
 		public void Stop() 
 		{ 
 			FileManager.Instance.Extensions.Remove("mp3");

@@ -34,7 +34,7 @@ namespace Axiom.SoundSystems
 {
 
 	/// <summary>
-	/// Abstract class SoundManager : IDisposable, Keeps track of loaded sounds and updates 
+	/// Abstract Class SoundManager : IDisposable, Keeps track of loaded sounds and updates 
 	/// sound and listener positions according to scene changes
 	/// </summary>
 	public abstract class SoundManager : IDisposable
@@ -139,7 +139,7 @@ namespace Axiom.SoundSystems
 		/// <summary>
 		/// Do some final initialisations
 		/// </summary>
-		/// <param name="window">The target RenderWindow</param>
+		/// <param name="renderwindow">The target RenderWindow</param>
 		/// <param name="camera">The 'listening' camera</param>
 		public virtual void SetRenderWindow(RenderWindow renderwindow, Camera camera)
 		{

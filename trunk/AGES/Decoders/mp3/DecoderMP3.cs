@@ -40,6 +40,7 @@ namespace Axiom.SoundSystems.Decoders
 {
 	/// <summary>
 	/// The Mp3 decoder
+	/// (This assembly is GPL licensed)
 	/// </summary>
 	public class DecoderMP3 : IDecoder
 	{

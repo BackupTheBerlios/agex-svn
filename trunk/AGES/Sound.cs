@@ -51,6 +51,21 @@ namespace Axiom.SoundSystems
 		protected Axiom.MathLib.Vector3 lastposition = Axiom.MathLib.Vector3.Zero;
 		
 		/// <summary>
+		/// SceneNode's last orientation, to check if it's changed
+		/// </summary>
+		protected Quaternion lastorientation = Quaternion.Zero;
+		
+		/// <summary>
+		/// Last cone direction, to check if it's changed
+		/// </summary>
+		protected Vector3 lastdirection = Vector3.Zero;
+		
+		/// <summary>
+		/// The direction of the sound cone
+		/// </summary>
+		protected Vector3 conedirection = Vector3.Zero;
+		
+		/// <summary>
 		/// Type is a simple warning or background sound, without fancy 3D positioning etc.
 		/// </summary>
 		public const short SIMPLE_SOUND = 1;
@@ -61,7 +76,7 @@ namespace Axiom.SoundSystems
 		public const short THREED_SOUND = 2;
 		
 		/// <summary>
-		/// Constructor, do not use this but initialise through SoundManager.LoadFile()
+		/// Constructor, do not use this but initialise through <see cref="Axiom.SoundSystems.SoundManager.LoadSound">SoundManager.LoadSound()</see>
 		/// </summary>
 		/// <param name="filename">The filename of the wave file (searched in the common resource data, ie. in the paths set in EngineConfig.xml)</param>
 		/// <param name="ID">This sound's ID given by the SoundManager</param>
@@ -79,7 +94,7 @@ namespace Axiom.SoundSystems
 		public abstract void Play(bool loop);
 		
 		/// <summary>
-		/// Stops playing the file, calling <see cref="Play(bool loop)">Play()</see> again will start playing from the position where Pause() was called
+		/// Stops playing the file, calling <see cref="Axiom.SoundSystems.Sound.Play">Play()</see> again will start playing from the position where Pause() was called
 		/// </summary>
 		public abstract void Pause();
 		
@@ -111,6 +126,7 @@ namespace Axiom.SoundSystems
 		/// </summary>
 		public virtual void UpdatePosition()
 		{
+			// if the position is changed
 			if((parentNode != null) && ( (lastnodeposition.x != parentNode.WorldPosition.x || lastnodeposition.y != parentNode.WorldPosition.y || lastnodeposition.z != parentNode.WorldPosition.z) || (this.Position != lastposition)))
 			{
 				SetPosition(parentNode.WorldPosition + this.Position);
@@ -118,16 +134,31 @@ namespace Axiom.SoundSystems
 				lastposition = this.Position;
 			}
 			
+			// if the orientation is changed
+			if((parentNode != null) && ( (parentNode.WorldOrientation.w != lastorientation.w || parentNode.WorldOrientation.x != lastorientation.x || parentNode.WorldOrientation.y != lastorientation.y || parentNode.WorldOrientation.z != lastorientation.z) || (conedirection != lastdirection)))
+			{
+				SetConeDirection(Quaternion.Multiply(parentNode.WorldOrientation, conedirection));
+				lastorientation = parentNode.WorldOrientation;
+				lastdirection = conedirection;
+			}
 		}
 		
 		/// <summary>
 		/// Set a new WorldPosition of the sound
 		/// </summary>
+		/// <param name="newposition">The position to set</param>
 		protected abstract void SetPosition(Axiom.MathLib.Vector3 newposition);
 		
 		/// <summary>
-		/// Set the current camera
+		/// Set a new direction of the sound cone in World coordinates
 		/// </summary>
+		/// <param name="direction">The direction to set</param>
+		protected abstract void SetConeDirection(Axiom.MathLib.Vector3 direction);
+		
+		/// <summary>
+		/// Set the current camera - Unused
+		/// </summary>
+		/// <param name="camera">The current camera</param>
 		public override void NotifyCurrentCamera(Camera camera)
 		{
 		}
@@ -135,6 +166,7 @@ namespace Axiom.SoundSystems
 		/// <summary>
 		/// Null-implementation of SceneObject Member
 		/// </summary>
+		/// <param name="queue"></param>
 		public override void UpdateRenderQueue(Axiom.Graphics.RenderQueue queue)
 		{
 			
@@ -191,12 +223,16 @@ namespace Axiom.SoundSystems
 		}
 		
 		/// <summary>
-		/// The direction of the sound cone ((not yet) relative to the ScenNode orientation)
+		/// The direction of the sound cone (relative to the SceneNode orientation)
 		/// </summary>
-		public abstract Axiom.MathLib.Vector3 ConeDirection
+		public virtual Axiom.MathLib.Vector3 ConeDirection
 		{
-			get;
-			set;
+			get{
+				return conedirection;
+			}
+			set{
+				conedirection = value;
+			}
 		}
 		
 		/// <summary>

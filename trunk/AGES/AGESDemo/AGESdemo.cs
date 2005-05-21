@@ -85,7 +85,7 @@ namespace Demo {
             // create a scene node to attach the camera to
             SceneNode cameraNode = scene.RootSceneNode.CreateChildSceneNode("CameraNode");
             cameraNode.AttachObject(camera);
- 
+            
             /////////////////////////- AGE Sound Library Settings -//////////////////////////
             // initialise the SoundManager by setting the RenderWindow
             SoundManager.Instance.SetRenderWindow(this.window, this.camera);
@@ -103,12 +103,13 @@ namespace Demo {
             // attach the sound to the head
            	headNode.AttachObject(growl);
             // set the sound's properties
-            //growl.ConeAngles = new int[]{90, 120};
-           // growl.ConeDirection = Vector3.UnitZ;
+            growl.ConeAngles = new int[]{120, 120};
+            growl.ConeDirection = Vector3.UnitZ;
       		//growl.MaxDistance = 5000;
-           // growl.OutsideVolume = -10000;
+            growl.OutsideVolume = -10000;
             // play the 3D sound in a loop
             growl.Play(true);
+            
             ////////////////////////////////////////////////////////////////////////////////
             
             // create new animation

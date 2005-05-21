@@ -150,17 +150,10 @@ namespace Axiom.SoundSystems.DirectSound
 			}
 		}
 		
-		public override Axiom.MathLib.Vector3 ConeDirection
+		protected override void SetConeDirection(Axiom.MathLib.Vector3 direction)
 		{
-			get{
-				//TODO: Relative to SceneNode
-				return new Axiom.MathLib.Vector3(threeDsound.ConeOrientation.X, threeDsound.ConeOrientation.Y, threeDsound.ConeOrientation.Z);
-			}
-			set{
-				//TODO: Relative to SceneNode
-				Axiom.MathLib.Vector3 vector = value;
-				threeDsound.ConeOrientation = new Vector3(vector.x, vector.y, vector.z);
-			}
+			Axiom.MathLib.Vector3 vector = direction;
+			threeDsound.ConeOrientation = new Vector3(vector.x, vector.y, vector.z);
 		}
 		
 		public override int OutsideVolume

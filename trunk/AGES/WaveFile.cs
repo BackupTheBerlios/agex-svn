@@ -24,7 +24,9 @@ using System.IO;
 
 namespace Axiom.SoundSystems
 {
-
+	/// <summary>
+	/// Structure WaveFile defines a wavefile, pcm data and format settings
+	/// </summary>
 	public struct WaveFile
 	{
 		private int freq;
@@ -33,6 +35,9 @@ namespace Axiom.SoundSystems
 		private Stream data;
 		private Stream file;
 		
+		/// <summary>
+		/// The sampling frequency of the data (in Hz = samples / second)
+		/// </summary>
 		public int Frequency
 		{
 			get{
@@ -43,6 +48,9 @@ namespace Axiom.SoundSystems
 			}
 		}
 		
+		/// <summary>
+		/// Sets the data 8 or 16 bits
+		/// </summary>
 		public short Bits
 		{
 			get{
@@ -53,6 +61,9 @@ namespace Axiom.SoundSystems
 			}
 		}
 		
+		/// <summary>
+		/// Set if it is a stereo or mono file
+		/// </summary>
 		public short Channels
 		{
 			get{
@@ -63,6 +74,9 @@ namespace Axiom.SoundSystems
 			}
 		}
 		
+		/// <summary>
+		/// Stream containing raw pcm data from decoders
+		/// </summary>
 		public Stream Data
 		{
 			get{
@@ -73,6 +87,9 @@ namespace Axiom.SoundSystems
 			}
 		}
 		
+		/// <summary>
+		/// Stream containing a full Wav file including headers
+		/// </summary>
 		public Stream WavFile
 		{
 			get{
