@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using System;
 using System.IO;
+using System.Collections;
+using System.Threading;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.SoundSystems;
@@ -59,12 +61,19 @@ namespace Axiom.SoundSystems.DirectSound
 		{
 			// create the sound and add it to our list
 			Axiom.SoundSystems.Sound sound = new Axiom.SoundSystems.DirectSound.Sound(filename, lastid, type);
-			soundlist.Add(sound);
+			soundlist.Insert(lastid, sound);
 			
 			// update the ID counter
 			lastid++;
 			
 			return sound;
+		}
+
+		protected override void ThreadedLoadSound(object stateInfo)
+		{
+			LoadInfo info = (LoadInfo)stateInfo;
+			Axiom.SoundSystems.Sound sound = new Axiom.SoundSystems.DirectSound.Sound(info.file_name, info.sound_id, info.sound_type);
+			soundlist.Insert(info.sound_id, sound);
 		}
 		
 		public override void SetRenderWindow(RenderWindow renderwindow, Camera camera)

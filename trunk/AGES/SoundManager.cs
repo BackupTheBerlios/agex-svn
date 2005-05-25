@@ -20,12 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #endregion
 
 // Some general remarks and todos
-// TODO: split buffer and source to prevent more filesystem access than needed
+// TODO: split buffer and source
 // TODO: Music class for streaming long files
-// TODO: Threading
 
 using System;
 using System.Collections;
+using System.Threading;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.MathLib;
@@ -78,6 +78,7 @@ namespace Axiom.SoundSystems
 		/// Constructor
 		/// </summary>
 		public SoundManager() {
+			soundlist.Add(null);
 			Root.Instance.FrameStarted += new FrameEvent(FrameUpdate);
 		}
 	
@@ -109,15 +110,48 @@ namespace Axiom.SoundSystems
 		public abstract Sound LoadSound(string filename, short type);
 		
 		/// <summary>
+		/// Load a sound from the common resource (defined in EngineConfig.xml) in a new, paralel thread.
+		/// (Currently only for DirectSound)
+		/// </summary>
+		/// <param name="filename">The sound's filename, extension is used to determine the encoding</param>
+		/// <param name="type">The sound type (Simple or 3D)</param>
+		/// <returns>The ID of the sound, so it can be called using <see cref="GetSound">GetSound()</see></returns>
+		public virtual int PreLoadSound(string filename, short type)
+		{
+			Axiom.SoundSystems.LoadInfo info = new Axiom.SoundSystems.LoadInfo(filename, lastid, type);
+			if(!ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadedLoadSound), info))
+			{
+				throw new AxiomException("Unable to queue thread for preloading");
+			}
+			
+			// update the ID counter
+			lastid++;
+			
+			return (lastid-1);			
+		}
+		
+		/// <summary>
+		/// Entry point for the loading thread
+		/// </summary>
+		/// <param name="stateInfo">State information, used to access the filename, id and type of the new sound</param>
+		protected abstract void ThreadedLoadSound (object stateInfo);
+		
+		/// <summary>
 		/// Get a previously loaded sound
 		/// </summary>
 		/// <param name="ID">The sound's ID</param>
 		/// <returns>The sound SceneObject requested or null if it's not found</returns>
 		public virtual Sound GetSound(int ID)
 		{
-			if(ID < soundlist.Count)
+			if(ID < (soundlist.Count-1))
 			{
-				return (Sound)soundlist[ID];
+				Sound thissound;
+				do
+				{
+					thissound = (Sound)soundlist[ID];
+				} while(thissound == null );
+				
+				return thissound;
 			} else {
 				return null;
 			}
@@ -132,7 +166,8 @@ namespace Axiom.SoundSystems
 		{
 			foreach(Sound sound in soundlist)
 			{
-				sound.UpdatePosition();
+				if(sound != null)
+					sound.UpdatePosition();
 			}
 		}
 		

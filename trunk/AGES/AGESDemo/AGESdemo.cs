@@ -49,7 +49,11 @@ namespace Demo {
         protected Sound growl;
         
         protected override void CreateScene() {
-            // set some ambient light
+             // initialise the SoundManager by setting the RenderWindow
+            SoundManager.Instance.SetRenderWindow(this.window, this.camera);
+	       	int back_id = SoundManager.Instance.PreLoadSound("background.wav", Sound.SIMPLE_SOUND);
+
+	       	// set some ambient light
             scene.AmbientLight = new ColorEx(1.0f, 0.2f, 0.2f, 0.2f);
 
             // create a skydome
@@ -87,20 +91,20 @@ namespace Demo {
             cameraNode.AttachObject(camera);
             
             /////////////////////////- AGE Sound Library Settings -//////////////////////////
-            // initialise the SoundManager by setting the RenderWindow
-            SoundManager.Instance.SetRenderWindow(this.window, this.camera);
             SoundManager.Instance.RolloffFactor = 0.01f; // we're working on a large scale
+           	growl = SoundManager.Instance.LoadSound("growl.ogg", Sound.THREED_SOUND);
+            
+            Sound back = SoundManager.Instance.GetSound( back_id );
             
             // load a simple sound
-            Sound back = SoundManager.Instance.LoadSound("background.wav", Sound.SIMPLE_SOUND);
+            //Sound back = SoundManager.Instance.LoadSound("background.wav", Sound.SIMPLE_SOUND);
             // set the volume low
-           // back.Volume = -2000;
+            back.Volume = -2000;
             // play the simple sound in a loop
             back.Play(true);
             
             // load a 3D sound
-            growl = SoundManager.Instance.LoadSound("growl.ogg", Sound.THREED_SOUND);
-            // attach the sound to the head
+             // attach the sound to the head
            	headNode.AttachObject(growl);
             // set the sound's properties
             growl.ConeAngles = new int[]{120, 120};

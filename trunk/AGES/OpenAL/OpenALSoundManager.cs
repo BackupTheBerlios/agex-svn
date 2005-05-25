@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 using System;
 using System.IO;
+using System.Threading;
 using Axiom.Core;
 using Axiom.Graphics;
 using Axiom.MathLib;
@@ -74,12 +75,20 @@ namespace Axiom.SoundSystems.OpenAL
 		{
 			// create the sound and add it to the list
 			Sound thissound = new Axiom.SoundSystems.OpenAL.Sound(filename, lastid, type);
-			soundlist.Add(thissound);
+			soundlist.Insert(lastid, thissound);
 			
 			// update the last id
 			lastid++;
 			
 			return thissound;
+		}
+		
+		
+		protected override void ThreadedLoadSound(object stateInfo)
+		{
+			LoadInfo info = (LoadInfo)stateInfo;
+			Axiom.SoundSystems.Sound sound = new Axiom.SoundSystems.OpenAL.Sound(info.file_name, info.sound_id, info.sound_type);
+			soundlist.Insert(info.sound_id, sound);
 		}
 		
 		public override Vector3 CameraVelocity

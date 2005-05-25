@@ -26,7 +26,7 @@ using Axiom.MathLib;
 namespace Axiom.SoundSystems
 {
 	/// <summary>
-	/// Abstract Class Sound : SceneObject, IDisposable, Implements and controls a sound buffer as SceneObject
+	/// Class Sound : SceneObject, IDisposable, Implements and controls a sound buffer as SceneObject
 	/// </summary>
 	public abstract class Sound : SceneObject, IDisposable
 	{
@@ -82,9 +82,12 @@ namespace Axiom.SoundSystems
 		/// <param name="ID">This sound's ID given by the SoundManager</param>
 		public Sound(string filename, int ID) : base()
 		{
-			id = ID;
-			name = "RESERVED/Sounds/ID" + this.ID.ToString();
-			LogManager.Instance.Write("SoundSystem: Loading sound {0}", filename);
+			if(ID >= 0)
+			{
+				id = ID;
+				name = "RESERVED/Sounds/ID" + this.ID.ToString();
+				LogManager.Instance.Write("SoundSystem: Loading sound {0}", filename);
+			}
 		}
 		
 		/// <summary>

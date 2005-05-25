@@ -31,9 +31,8 @@ namespace Axiom.SoundSystems.OpenAL
 
 	public class Sound : Axiom.SoundSystems.Sound
 	{
-		private static int sound;
-		private static int source;
-		private Vector3 worldposition = Vector3.Zero;
+		private int sound;
+		private int source;
 		private short soundtype;
 		private float rolloff = 1;
 		
@@ -48,7 +47,7 @@ namespace Axiom.SoundSystems.OpenAL
 			
 			int format, size, frequency, loop;
 			byte[] data;			
-			
+
 			if ( (file.WavFile) != null )
 			{ 
 				// we have a full wave file with headers
@@ -114,6 +113,8 @@ namespace Axiom.SoundSystems.OpenAL
 				Al.alSourcei(source, Al.AL_DISTANCE_MODEL, Al.AL_NONE);
 				rolloff = 0;
 				Al.alSourcef(source, Al.AL_ROLLOFF_FACTOR, 0);
+				Al.alSourcei(source, Al.AL_SOURCE_RELATIVE, Al.AL_TRUE);
+				Al.alSourcefv(source, Al.AL_POSITION, new float[]{0,0,0});
 				
 			} else if (type == Sound.THREED_SOUND) {
 				
@@ -159,14 +160,6 @@ namespace Axiom.SoundSystems.OpenAL
 				rolloff = SoundManager.Instance.RolloffFactor;
 				Al.alSourcef(source, Al.AL_ROLLOFF_FACTOR, rolloff);
 			}
-			
-			// if it's a 'simple' sound, set the position to the listener's position
-			if(this.soundtype == Sound.SIMPLE_SOUND)
-			{
-				float[] temp = new float[3];
-				Al.alGetListenerfv(Al.AL_POSITION, temp);
-				Al.alSourcefv(source, Al.AL_POSITION, temp);
-			}
 		}
 		
 		protected override void SetPosition(Axiom.MathLib.Vector3 newposition)
@@ -178,8 +171,9 @@ namespace Axiom.SoundSystems.OpenAL
 		public override Vector3 WorldPosition
 		{
 			get{
-				//TODO: WorldPosition
-				return worldposition;
+				float[] vector = new float[3];
+				Al.alGetSourcefv(source, Al.AL_POSITION, vector);
+				return new Vector3(vector[0], vector[1], vector[2]);
 			}
 		}
 		
@@ -253,10 +247,9 @@ namespace Axiom.SoundSystems.OpenAL
 			}
 		}
 		
-		//TODO: Volume conversion doesn't work too well yet
 		protected float GetOpenALVolume(int directSoundVolume)
 		{
-			float newvalue = (float)directSoundVolume / 1000f + 1f;
+			float newvalue = (float)directSoundVolume / 10000f + 1f;
 			if(newvalue > 1f)
 			{
 				return 1f;
@@ -270,7 +263,7 @@ namespace Axiom.SoundSystems.OpenAL
 		
 		protected int GetDirectSoundVolume(float openALVolume)
 		{
-			int newvalue = Int32.Parse(Math.Round((openALVolume - 1) * 1000).ToString());
+			int newvalue = Convert.ToInt32((openALVolume - 1) * 10000);
 			if(newvalue < -10000)
 			{
 				return -10000;
